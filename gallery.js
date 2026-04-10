@@ -6,71 +6,6 @@
   const CONTENT_API = '/content-api';
   const MAX_DIMENSION = 1600;
   const JPEG_QUALITY = 0.82;
-  const HERO_VARIANT_KEY = 'wb-resume-hero-variant';
-
-  const HERO_VARIANTS = {
-    1: {
-      eyebrow: 'Павел Лесников • Менеджер маркетплейсов Wildberries / Ozon',
-      title: '',
-      lead: '1,5+ года практического опыта в Wildberries: реклама, SEO, инфографика, поставки, отзывы, логистика и unit-экономика.\nПлюс опыт собственного магазина и автоматизации процессов с помощью ИИ.',
-      badge: 'Коротко',
-      facts: [
-        '<strong>1,5+ года</strong> в WB',
-        '<strong>LOMKA, Cosmo Beauty, IT\'S BASE</strong>',
-        'Опыт со стороны <strong>селлера</strong>',
-        'Фокус на <strong>аналитике и марже</strong>'
-      ]
-    },
-    2: {
-      eyebrow: 'Павел Лесников • Пермь • Менеджер маркетплейсов',
-      title: 'Привет, я Павел Лесников',
-      lead: 'Это мой сайт-визитка, где я кратко собрал информацию о себе, своём опыте и сильных сторонах в e-commerce.\n\nЗдесь можно посмотреть мой реальный опыт работы с Wildberries, фото по проектам, ответы на частые вопросы и понять, чем я могу быть полезен бизнесу.',
-      badge: 'Что здесь есть',
-      facts: [
-        '<strong>Опыт:</strong> реальные проекты и задачи',
-        '<strong>Фото:</strong> подтверждение практики',
-        '<strong>FAQ:</strong> ответы на частые вопросы',
-        '<strong>Контакты:</strong> для связи по сотрудничеству'
-      ]
-    },
-    3: {
-      eyebrow: 'Павел Лесников • Пермь • Wildberries / E-commerce',
-      title: 'Меня зовут Павел, и здесь — кратко обо мне как о специалисте',
-      lead: 'Последние годы я работаю в digital и e-commerce: занимался Telegram-проектами, работал с Wildberries, пробовал себя как селлер и развивал навыки автоматизации с помощью AI.\n\nЭтот сайт нужен для того, чтобы быстро показать мой релевантный опыт, подход к работе и реальные точки, где я уже был полезен.',
-      badge: 'Коротко обо мне',
-      facts: [
-        '<strong>6 лет</strong> работы в интернете',
-        '<strong>1,5+ года</strong> практики в WB',
-        '<strong>Свой магазин</strong> как опыт селлера',
-        '<strong>AI</strong> для упрощения рутины'
-      ]
-    },
-    4: {
-      eyebrow: 'Павел Лесников • Пермь • Менеджер Wildberries',
-      title: 'Вы попали на мой сайт-визитку',
-      lead: 'Я собрал здесь основные блоки о себе: кто я, какой у меня опыт в Wildberries, в чём мои сильные стороны и какие задачи я уже решал на практике.\n\nИдея простая — чтобы HR или владелец бизнеса могли быстро понять, подхожу ли я им по опыту и формату мышления.',
-      badge: 'Навигация по сайту',
-      facts: [
-        '<strong>Обо мне</strong> — общий бэкграунд',
-        '<strong>Сильные стороны</strong> — что меня выделяет',
-        '<strong>E-Commerce</strong> — рабочий опыт',
-        '<strong>FAQ</strong> — ответы на ваши вопросы',
-        '<strong>Контакты</strong> — как связаться'
-      ]
-    },
-    5: {
-      eyebrow: 'Павел Лесников • Пермь • E-commerce / Wildberries',
-      title: 'Здесь я кратко показываю, кто я, чем занимался и куда хочу двигаться дальше',
-      lead: 'Это не просто красивая страница, а сжатая презентация моего опыта: работа на Wildberries, собственный селлерский опыт, операционка, реклама, карточки, аналитика и практический взгляд на e-commerce.\n\nЕсли вам важно быстро понять, кто перед вами и стоит ли идти дальше в диалог — на этом сайте всё собрано в одном месте.',
-      badge: 'Смысл сайта',
-      facts: [
-        '<strong>Кто я</strong> — как специалист и человек',
-        '<strong>Чем занимался</strong> — по реальным кейсам',
-        '<strong>Что умею</strong> — без лишней воды',
-        '<strong>Зачем сайт</strong> — быстро показать суть'
-      ]
-    }
-  };
 
   function isAdmin() {
     return localStorage.getItem(ADMIN_KEY) === 'true';
@@ -379,40 +314,6 @@
     } catch (_) {}
   }
 
-  function applyHeroVariant(variantId) {
-    const variant = HERO_VARIANTS[variantId] || HERO_VARIANTS[1];
-    const eyebrow = document.querySelector('[data-hero-eyebrow]');
-    const title = document.querySelector('[data-hero-title]');
-    const lead = document.querySelector('[data-hero-lead]');
-    const badge = document.querySelector('[data-hero-badge]');
-    const factEls = Array.from(document.querySelectorAll('[data-hero-fact]'));
-
-    if (eyebrow) eyebrow.textContent = variant.eyebrow;
-    if (title) {
-      title.textContent = variant.title;
-      title.hidden = !variant.title;
-    }
-    if (lead) lead.textContent = variant.lead;
-    if (badge) badge.textContent = variant.badge;
-    factEls.forEach((el, index) => {
-      el.innerHTML = variant.facts[index] || '';
-    });
-
-    document.body.classList.remove('hero-variant-1', 'hero-variant-2', 'hero-variant-3', 'hero-variant-4', 'hero-variant-5');
-    document.body.classList.add(`hero-variant-${variantId}`);
-    document.querySelectorAll('[data-hero-variant]').forEach((btn) => {
-      btn.classList.toggle('is-active', Number(btn.dataset.heroVariant) === Number(variantId));
-    });
-    localStorage.setItem(HERO_VARIANT_KEY, String(variantId));
-  }
-
-  function initHeroVariants() {
-    const current = Number(localStorage.getItem(HERO_VARIANT_KEY) || '1');
-    document.querySelectorAll('[data-hero-variant]').forEach((btn) => {
-      btn.addEventListener('click', () => applyHeroVariant(Number(btn.dataset.heroVariant)));
-    });
-    applyHeroVariant(current);
-  }
 
   function renderGallery(root) {
     const state = getState(root);
@@ -562,7 +463,6 @@
     ensureModal();
     initAdminUI();
     initFaqAdmin();
-    initHeroVariants();
     loadProfileImage();
     document.querySelectorAll('.experience-gallery').forEach(initGallery);
   });

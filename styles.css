@@ -124,13 +124,6 @@ body {
   gap: 12px;
 }
 
-.nav-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-}
-
 .nav-menu {
   list-style: none;
   display: flex;
@@ -184,26 +177,6 @@ body {
 .hero-visual { position: relative; min-height: 420px; display: flex; align-items: center; justify-content: center; }
 .hero-stack { position: relative; width: min(430px, 100%); height: 430px; }
 
-.hero-variant-buttons {
-  display: inline-flex;
-  gap: 8px;
-}
-
-.hero-variant-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
-  border: 1px solid rgba(139,92,246,0.18);
-  background: rgba(255,255,255,0.04);
-  color: var(--text);
-  cursor: pointer;
-  font-weight: 700;
-}
-
-.hero-variant-btn.is-active {
-  background: var(--gradient);
-  border-color: transparent;
-}
 
 .photo-slot {
   position: absolute;
@@ -361,21 +334,8 @@ h3 { margin: 0 0 6px; font-size: 17px; }
   white-space: pre-line;
 }
 
-body.hero-variant-2 .hero-panel-main {
-  transform: translateY(-6px);
-}
-
-body.hero-variant-3 .hero-copy {
-  max-width: 620px;
-}
-
-body.hero-variant-4 .hero-panel-main {
+.hero-panel-main {
   background: linear-gradient(180deg, rgba(34, 20, 48, .78), rgba(18, 16, 34, .72));
-}
-
-body.hero-variant-5 .hero-copy .lead {
-  max-width: 620px;
-  font-size: 15px;
 }
 .muted { color: var(--muted); }
 
@@ -924,7 +884,6 @@ body.admin-mode .faq-item-actions {
 @media (max-width: 980px) {
   .nav-menu { display: none; }
   .nav-right { gap: 0; }
-  .nav-center { justify-content: flex-end; }
   .hero-grid, .grid-2, .contact, .cards-3, .experience-layout { grid-template-columns: 1fr; }
   .hero { padding-top: 88px; min-height: auto; }
   .hero-visual { min-height: 360px; }
@@ -941,10 +900,7 @@ body.admin-mode .faq-item-actions {
   h1 { font-size: clamp(28px, 10vw, 40px); }
   h2 { font-size: clamp(20px, 8vw, 28px); }
   .nav { padding: 12px; }
-  .nav-container { padding: 10px 16px; gap: 8px; }
-  .nav-center { flex: 0 1 auto; }
-  .hero-variant-buttons { gap: 6px; }
-  .hero-variant-btn { width: 28px; height: 28px; }
+  .nav-container { padding: 10px 16px; }
   .photo-slot,
   .hero-panel-main,
   .hero-panel-side { position: relative; width: 100%; left: auto; right: auto; top: auto; bottom: auto; }
