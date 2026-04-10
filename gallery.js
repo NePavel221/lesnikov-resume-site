@@ -1,7 +1,9 @@
 (function () {
   const ADMIN_KEY = 'wb-resume-admin';
   const ADMIN_PASSWORD = '2503';
-  const API_BASE = '/gallery-api';
+  const GALLERY_API = '/gallery-api';
+  const FAQ_API = '/faq-api';
+  const CONTENT_API = '/content-api';
   const MAX_DIMENSION = 1600;
   const JPEG_QUALITY = 0.82;
 
@@ -14,6 +16,10 @@
     document.body.classList.toggle('admin-mode', state);
     const toggle = document.querySelector('[data-admin-toggle]');
     if (toggle) toggle.textContent = state ? 'Выйти' : 'Войти';
+    const faqAdmin = document.querySelector('[data-faq-admin]');
+    if (faqAdmin) faqAdmin.hidden = !state;
+    const heroAdmin = document.querySelector('[data-hero-admin]');
+    if (heroAdmin) heroAdmin.hidden = !state;
   }
 
   function openAdminModal() {
@@ -45,11 +51,8 @@
     setAdmin(isAdmin());
 
     toggle.addEventListener('click', () => {
-      if (isAdmin()) {
-        setAdmin(false);
-      } else {
-        openAdminModal();
-      }
+      if (isAdmin()) setAdmin(false);
+      else openAdminModal();
     });
 
     modal.addEventListener('click', (e) => {
@@ -66,9 +69,7 @@
       if (input.value === ADMIN_PASSWORD) {
         setAdmin(true);
         closeAdminModal();
-      } else if (error) {
-        error.hidden = false;
-      }
+      } else if (error) error.hidden = false;
     };
 
     submit?.addEventListener('click', tryLogin);
@@ -83,6 +84,144 @@
       if (e.key === 'Enter') tryLogin();
       if (e.key === 'Escape') closeAdminModal();
     });
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  async function apiGet(url) {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('GET failed');
+    return res.json();
+  }
+
+  async function apiPost(url, body) {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error('POST failed');
+    return res.json();
+  }
+
+  let faqState = [];
+
+  function renderFaq() {
+    const list = document.querySelector('[data-faq-list]');
+    if (!list) return;
+    list.innerHTML = faqState.map((item, index) => `
+      <details class="faq-item glass-card" ${index === 0 ? 'open' : ''}>
+        <summary>${escapeHtml(item.question)}</summary>
+        <div class="faq-answer">${escapeHtml(item.answer)}</div>
+        <div class="faq-item-actions">
+          <button class="faq-mini-btn" type="button" data-faq-edit="${item.id}">Редактировать</button>
+          <button class="faq-mini-btn" type="button" data-faq-up="${item.id}">↑</button>
+          <button class="faq-mini-btn" type="button" data-faq-down="${item.id}">↓</button>
+          <span class="faq-move-group">
+            <input class="faq-move-input" type="number" min="1" max="${faqState.length}" value="${index + 1}" data-faq-target="${item.id}" />
+            <button class="faq-mini-btn" type="button" data-faq-move="${item.id}">Перенести</button>
+          </span>
+          <button class="faq-mini-btn danger" type="button" data-faq-delete="${item.id}">Удалить</button>
+        </div>
+      </details>
+    `).join('');
+  }
+
+  async function refreshFaq() {
+    const data = await apiGet(`${FAQ_API}/list`);
+    faqState = data.items || [];
+    renderFaq();
+  }
+
+  function initFaqAdmin() {
+    const questionInput = document.querySelector('[data-faq-question]');
+    const answerInput = document.querySelector('[data-faq-answer]');
+    const saveBtn = document.querySelector('[data-faq-save]');
+    const resetBtn = document.querySelector('[data-faq-reset]');
+    const list = document.querySelector('[data-faq-list]');
+    if (!questionInput || !answerInput || !saveBtn || !resetBtn || !list) return;
+
+    let editingId = null;
+
+    function resetForm() {
+      editingId = null;
+      questionInput.value = '';
+      answerInput.value = '';
+      saveBtn.textContent = 'Сохранить вопрос';
+    }
+
+    saveBtn.addEventListener('click', async () => {
+      if (!isAdmin()) return;
+      const question = questionInput.value.trim();
+      const answer = answerInput.value;
+      if (!question || !answer.trim()) return;
+      await apiPost(`${FAQ_API}/save`, { id: editingId, question, answer });
+      await refreshFaq();
+      resetForm();
+    });
+
+    resetBtn.addEventListener('click', resetForm);
+
+    list.addEventListener('click', async (e) => {
+      const editBtn = e.target.closest('[data-faq-edit]');
+      const deleteBtn = e.target.closest('[data-faq-delete]');
+      const upBtn = e.target.closest('[data-faq-up]');
+      const downBtn = e.target.closest('[data-faq-down]');
+      const moveBtn = e.target.closest('[data-faq-move]');
+
+      if (editBtn) {
+        if (!isAdmin()) return;
+        const id = Number(editBtn.getAttribute('data-faq-edit'));
+        const item = faqState.find(x => x.id === id);
+        if (!item) return;
+        editingId = id;
+        questionInput.value = item.question;
+        answerInput.value = item.answer;
+        saveBtn.textContent = 'Сохранить изменения';
+        questionInput.focus();
+      }
+
+      if (deleteBtn) {
+        if (!isAdmin()) return;
+        const id = Number(deleteBtn.getAttribute('data-faq-delete'));
+        if (!window.confirm('Удалить этот вопрос из FAQ?')) return;
+        await apiPost(`${FAQ_API}/delete`, { id });
+        await refreshFaq();
+        resetForm();
+      }
+
+      if (upBtn) {
+        if (!isAdmin()) return;
+        const id = Number(upBtn.getAttribute('data-faq-up'));
+        await apiPost(`${FAQ_API}/move`, { id, direction: 'up' });
+        await refreshFaq();
+      }
+
+      if (downBtn) {
+        if (!isAdmin()) return;
+        const id = Number(downBtn.getAttribute('data-faq-down'));
+        await apiPost(`${FAQ_API}/move`, { id, direction: 'down' });
+        await refreshFaq();
+      }
+
+      if (moveBtn) {
+        if (!isAdmin()) return;
+        const id = Number(moveBtn.getAttribute('data-faq-move'));
+        const input = list.querySelector(`[data-faq-target="${id}"]`);
+        const target = Number(input?.value || 1) - 1;
+        await apiPost(`${FAQ_API}/move`, { id, target_index: target });
+        await refreshFaq();
+      }
+    });
+
+    refreshFaq();
   }
 
   function fileToImage(file) {
@@ -153,25 +292,78 @@
   }
 
   async function apiGetGallery(id) {
-    const res = await fetch(`${API_BASE}/list?id=${encodeURIComponent(id)}`);
-    if (!res.ok) throw new Error('Failed to load gallery');
-    const data = await res.json();
+    const data = await apiGet(`${GALLERY_API}/list?id=${encodeURIComponent(id)}`);
     return data.items || [];
   }
 
-  async function apiPost(path, body) {
-    const res = await fetch(`${API_BASE}${path}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-    if (!res.ok) throw new Error('Request failed');
-    return res.json();
+  async function apiPostGallery(path, body) {
+    return apiPost(`${GALLERY_API}${path}`, body);
   }
 
   function getState(root) {
     if (!root._galleryState) root._galleryState = { items: [], index: 0 };
     return root._galleryState;
+  }
+
+  async function loadProfileImage() {
+    const profile = document.querySelector('.photo-slot-image');
+    if (!profile) return;
+    try {
+      const data = await apiGet('/profile-api');
+      if (data?.src) profile.src = data.src;
+    } catch (_) {}
+  }
+
+  async function loadHeroContent() {
+    const lead = document.querySelector('[data-hero-lead]');
+    const input = document.querySelector('[data-hero-lead-input]');
+    if (!lead) return;
+    try {
+      const data = await apiGet(`${CONTENT_API}/get?key=hero_lead`);
+      const value = data?.value || '';
+      lead.textContent = value;
+      if (input) input.value = value;
+    } catch (_) {}
+  }
+
+  function initHeroAdmin() {
+    const input = document.querySelector('[data-hero-lead-input]');
+    const editBtn = document.querySelector('[data-hero-edit]');
+    const saveBtn = document.querySelector('[data-hero-save]');
+    const cancelBtn = document.querySelector('[data-hero-cancel]');
+    const lead = document.querySelector('[data-hero-lead]');
+    if (!input || !editBtn || !saveBtn || !cancelBtn || !lead) return;
+
+    const setEditing = (editing) => {
+      lead.hidden = editing;
+      input.hidden = !editing;
+      input.classList.toggle('is-editing', editing);
+      editBtn.hidden = editing;
+      saveBtn.hidden = !editing;
+      cancelBtn.hidden = !editing;
+      if (editing) {
+        input.value = lead.textContent || '';
+        setTimeout(() => input.focus(), 10);
+      }
+    };
+
+    editBtn.addEventListener('click', () => {
+      if (!isAdmin()) return;
+      setEditing(true);
+    });
+
+    cancelBtn.addEventListener('click', () => {
+      input.value = lead.textContent || '';
+      setEditing(false);
+    });
+
+    saveBtn.addEventListener('click', async () => {
+      if (!isAdmin()) return;
+      const value = input.value;
+      await apiPost(`${CONTENT_API}/save`, { key: 'hero_lead', value });
+      lead.textContent = value;
+      setEditing(false);
+    });
   }
 
   function renderGallery(root) {
@@ -237,7 +429,7 @@
       payload.push(await compressImage(file));
     }
     if (!payload.length) return;
-    await apiPost('/upload', { id: root.dataset.galleryId, images: payload });
+    await apiPostGallery('/upload', { id: root.dataset.galleryId, images: payload });
     await refreshGallery(root, false);
   }
 
@@ -278,7 +470,7 @@
       if (!isAdmin()) return;
       const state = getState(root);
       if (state.index <= 0 || !state.items.length) return;
-      await apiPost('/move', { id: root.dataset.galleryId, index: state.index, direction: 'left' });
+      await apiPostGallery('/move', { id: root.dataset.galleryId, index: state.index, direction: 'left' });
       state.index -= 1;
       await refreshGallery(root, true);
     });
@@ -287,7 +479,7 @@
       if (!isAdmin()) return;
       const state = getState(root);
       if (state.index >= state.items.length - 1 || !state.items.length) return;
-      await apiPost('/move', { id: root.dataset.galleryId, index: state.index, direction: 'right' });
+      await apiPostGallery('/move', { id: root.dataset.galleryId, index: state.index, direction: 'right' });
       state.index += 1;
       await refreshGallery(root, true);
     });
@@ -297,7 +489,7 @@
       const ok = window.confirm('Удалить текущее фото из этой карусели?');
       if (!ok) return;
       const state = getState(root);
-      await apiPost('/delete', { id: root.dataset.galleryId, index: state.index });
+      await apiPostGallery('/delete', { id: root.dataset.galleryId, index: state.index });
       await refreshGallery(root, true);
     });
 
@@ -305,7 +497,7 @@
       if (!isAdmin()) return;
       const ok = window.confirm('Удалить все фото из этой карусели? Это действие нельзя отменить.');
       if (!ok) return;
-      await apiPost('/clear', { id: root.dataset.galleryId });
+      await apiPostGallery('/clear', { id: root.dataset.galleryId });
       await refreshGallery(root, true);
     });
 
@@ -321,6 +513,10 @@
   document.addEventListener('DOMContentLoaded', () => {
     ensureModal();
     initAdminUI();
+    initFaqAdmin();
+    initHeroAdmin();
+    loadProfileImage();
+    loadHeroContent();
     document.querySelectorAll('.experience-gallery').forEach(initGallery);
   });
 })();

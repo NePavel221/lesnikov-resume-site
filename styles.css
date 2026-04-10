@@ -328,6 +328,10 @@ h2 {
 h3 { margin: 0 0 6px; font-size: 17px; }
 .lead, p, li, a { font-size: 14px; line-height: 1.58; }
 .lead { color: #e8eaff; max-width: 560px; }
+
+[data-hero-lead] {
+  white-space: pre-line;
+}
 .muted { color: var(--muted); }
 
 .section-head {
@@ -584,6 +588,178 @@ body.admin-mode .gallery-controls.overlay-controls {
 
 body.modal-open {
   overflow: hidden;
+}
+
+.faq-admin-panel {
+  max-width: 860px;
+  margin: 0 auto 14px;
+  padding: 16px;
+}
+
+.faq-admin-head {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.faq-admin-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.faq-input,
+.faq-textarea {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(139,92,246,0.16);
+  background: rgba(255,255,255,0.04);
+  color: white;
+  padding: 12px 14px;
+  font: inherit;
+}
+
+.faq-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.hero-lead-wrap {
+  display: grid;
+  gap: 12px;
+}
+
+.hero-lead-inline-wrap {
+  display: grid;
+  gap: 10px;
+  max-width: 560px;
+}
+
+.hero-inline-editor {
+  width: 100%;
+  min-height: 130px;
+  border-radius: 14px;
+  border: 1px solid rgba(139,92,246,0.18);
+  background: rgba(255,255,255,0.04);
+  color: #e8eaff;
+  padding: 0;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.58;
+  resize: vertical;
+  outline: none;
+}
+
+.hero-inline-editor.is-editing {
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.05);
+  box-shadow: 0 0 0 3px rgba(139,92,246,0.08);
+}
+
+.hero-inline-actions {
+  display: none;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+body.admin-mode .hero-inline-actions {
+  display: flex;
+}
+
+.faq-admin-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.faq-list {
+  max-width: 860px;
+  margin: 0 auto;
+  display: grid;
+  gap: 12px;
+}
+
+.faq-item {
+  padding: 0;
+  overflow: hidden;
+}
+
+.faq-item summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 18px 20px;
+  font-weight: 700;
+  font-size: 15px;
+  position: relative;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item summary::after {
+  content: '+';
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #cdb8ff;
+}
+
+.faq-item[open] summary::after {
+  content: '–';
+}
+
+.faq-answer {
+  padding: 0 20px 18px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.faq-item-actions {
+  display: none;
+  gap: 8px;
+  padding: 0 20px 18px;
+  flex-wrap: wrap;
+}
+
+body.admin-mode .faq-item-actions {
+  display: flex;
+}
+
+.faq-move-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.faq-move-input {
+  width: 56px;
+  min-height: 32px;
+  border-radius: 10px;
+  border: 1px solid rgba(139,92,246,0.16);
+  background: rgba(255,255,255,0.04);
+  color: white;
+  padding: 0 8px;
+  font: inherit;
+  font-size: 12px;
+}
+
+.faq-mini-btn {
+  min-height: 32px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(139,92,246,0.16);
+  background: rgba(255,255,255,0.04);
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.faq-mini-btn.danger {
+  border-color: rgba(236,72,153,0.22);
 }
 
 .admin-modal {
