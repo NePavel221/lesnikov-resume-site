@@ -128,7 +128,7 @@ class Handler(SimpleHTTPRequestHandler):
             conn = db()
             row = conn.execute('SELECT value FROM site_content WHERE key = ?', (key,)).fetchone()
             conn.close()
-            return json_response(self, 200, {'key': key, 'value': row['value'] if row else ''})
+            return json_response(self, 200, {'key': key, 'found': bool(row), 'value': row['value'] if row else ''})
 
         return super().do_GET()
 
