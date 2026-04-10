@@ -18,8 +18,6 @@
     if (toggle) toggle.textContent = state ? 'Выйти' : 'Войти';
     const faqAdmin = document.querySelector('[data-faq-admin]');
     if (faqAdmin) faqAdmin.hidden = !state;
-    const heroAdmin = document.querySelector('[data-hero-admin]');
-    if (heroAdmin) heroAdmin.hidden = !state;
   }
 
   function openAdminModal() {
@@ -314,55 +312,108 @@
     } catch (_) {}
   }
 
-  async function loadHeroContent() {
-    const lead = document.querySelector('[data-hero-lead]');
-    const input = document.querySelector('[data-hero-lead-input]');
-    if (!lead) return;
-    try {
-      const data = await apiGet(`${CONTENT_API}/get?key=hero_lead`);
-      const value = data?.value || '';
-      lead.textContent = value;
-      if (input) input.value = value;
-    } catch (_) {}
+  function setEditableElementValue(el, value) {
+    if (el.matches('input, textarea')) el.value = value;
+    else el.innerHTML = value;
   }
 
-  function initHeroAdmin() {
-    const input = document.querySelector('[data-hero-lead-input]');
-    const editBtn = document.querySelector('[data-hero-edit]');
-    const saveBtn = document.querySelector('[data-hero-save]');
-    const cancelBtn = document.querySelector('[data-hero-cancel]');
-    const lead = document.querySelector('[data-hero-lead]');
-    if (!input || !editBtn || !saveBtn || !cancelBtn || !lead) return;
+  function getEditableElementValue(el) {
+    if (el.matches('input, textarea')) return el.value;
+    return el.innerHTML;
+  }
 
-    const setEditing = (editing) => {
-      lead.hidden = editing;
-      input.hidden = !editing;
-      input.classList.toggle('is-editing', editing);
-      editBtn.hidden = editing;
-      saveBtn.hidden = !editing;
-      cancelBtn.hidden = !editing;
-      if (editing) {
-        input.value = lead.textContent || '';
-        setTimeout(() => input.focus(), 10);
+  async function loadEditableContent() {
+    const elements = Array.from(document.querySelectorAll('[data-edit-key]'));
+    await Promise.all(elements.map(async (el) => {
+      const key = el.dataset.editKey;
+      try {
+        const data = await apiGet(`${CONTENT_API}/get?key=${encodeURIComponent(key)}`);
+        const current = getEditableElementValue(el).trim();
+        if (data && Object.prototype.hasOwnProperty.call(data, 'value')) {
+          setEditableElementValue(el, data.value || '');
+        } else if (current) {
+          await apiPost(`${CONTENT_API}/save`, { key, value: getEditableElementValue(el) });
+        }
+      } catch (_) {}
+    }));
+  }
+
+  function initInlineEditor() {
+    let active = null;
+    let toolbar = null;
+
+    function removeToolbar() {
+      if (toolbar) toolbar.remove();
+      toolbar = null;
+    }
+
+    function stopEditing(save = false) {
+      if (!active) return;
+      const { el, original } = active;
+      if (save) {
+        apiPost(`${CONTENT_API}/save`, { key: el.dataset.editKey, value: getEditableElementValue(el) })
+          .catch(() => setEditableElementValue(el, original));
+      } else {
+        setEditableElementValue(el, original);
       }
-    };
+      el.removeAttribute('contenteditable');
+      el.classList.remove('inline-editing');
+      removeToolbar();
+      active = null;
+    }
 
-    editBtn.addEventListener('click', () => {
+    function startEditing(el) {
       if (!isAdmin()) return;
-      setEditing(true);
-    });
+      if (active && active.el === el) return;
+      if (active) stopEditing(true);
+      active = { el, original: getEditableElementValue(el) };
+      el.setAttribute('contenteditable', 'true');
+      el.classList.add('inline-editing');
+      el.focus();
+      document.execCommand?.('selectAll', false, null);
+      document.getSelection()?.collapseToEnd();
 
-    cancelBtn.addEventListener('click', () => {
-      input.value = lead.textContent || '';
-      setEditing(false);
-    });
+      toolbar = document.createElement('div');
+      toolbar.className = 'inline-edit-toolbar';
+      toolbar.innerHTML = `
+        <button type="button" class="faq-mini-btn" data-action="save">Сохранить</button>
+        <button type="button" class="faq-mini-btn" data-action="cancel">Отмена</button>
+      `;
+      toolbar.addEventListener('mousedown', (e) => e.preventDefault());
+      toolbar.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-action]');
+        if (!btn) return;
+        stopEditing(btn.dataset.action === 'save');
+      });
+      el.insertAdjacentElement('afterend', toolbar);
+    }
 
-    saveBtn.addEventListener('click', async () => {
-      if (!isAdmin()) return;
-      const value = input.value;
-      await apiPost(`${CONTENT_API}/save`, { key: 'hero_lead', value });
-      lead.textContent = value;
-      setEditing(false);
+    document.querySelectorAll('[data-edit-key]').forEach((el) => {
+      el.addEventListener('click', () => {
+        if (!isAdmin()) return;
+        startEditing(el);
+      });
+
+      el.addEventListener('keydown', (e) => {
+        if (!active || active.el !== el) return;
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          stopEditing(false);
+        }
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+          e.preventDefault();
+          stopEditing(true);
+        }
+      });
+
+      el.addEventListener('blur', () => {
+        if (!active || active.el !== el) return;
+        setTimeout(() => {
+          if (active && document.activeElement !== el && !toolbar?.contains(document.activeElement)) {
+            stopEditing(true);
+          }
+        }, 120);
+      });
     });
   }
 
@@ -514,9 +565,9 @@
     ensureModal();
     initAdminUI();
     initFaqAdmin();
-    initHeroAdmin();
+    initInlineEditor();
     loadProfileImage();
-    loadHeroContent();
+    loadEditableContent();
     document.querySelectorAll('.experience-gallery').forEach(initGallery);
   });
 })();
