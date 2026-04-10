@@ -329,7 +329,7 @@
       try {
         const data = await apiGet(`${CONTENT_API}/get?key=${encodeURIComponent(key)}`);
         const current = getEditableElementValue(el).trim();
-        if (data?.found) {
+        if (data && Object.prototype.hasOwnProperty.call(data, 'value')) {
           setEditableElementValue(el, data.value || '');
         } else if (current) {
           await apiPost(`${CONTENT_API}/save`, { key, value: getEditableElementValue(el) });
