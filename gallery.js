@@ -6,6 +6,70 @@
   const CONTENT_API = '/content-api';
   const MAX_DIMENSION = 1600;
   const JPEG_QUALITY = 0.82;
+  const HERO_VARIANT_KEY = 'wb-resume-hero-variant';
+
+  const HERO_VARIANTS = {
+    1: {
+      eyebrow: 'Павел Лесников • Менеджер маркетплейсов Wildberries / Ozon',
+      title: '',
+      lead: '1,5+ года практического опыта в Wildberries: реклама, SEO, инфографика, поставки, отзывы, логистика и unit-экономика.\nПлюс опыт собственного магазина и автоматизации процессов с помощью ИИ.',
+      badge: 'Коротко',
+      facts: [
+        '<strong>1,5+ года</strong> в WB',
+        '<strong>LOMKA, Cosmo Beauty, IT\'S BASE</strong>',
+        'Опыт со стороны <strong>селлера</strong>',
+        'Фокус на <strong>аналитике и марже</strong>'
+      ]
+    },
+    2: {
+      eyebrow: 'Павел Лесников • Менеджер Wildberries / E-commerce',
+      title: 'Менеджер Wildberries с опытом в рекламе, карточках, аналитике и операционке',
+      lead: 'Есть практический опыт в Wildberries: внутренняя реклама, SEO, инфографика, поставки, отзывы, логистика и unit-экономика.\n\nРаботал внутри брендов и со стороны собственного магазина, поэтому понимаю не только кабинет, но и весь путь товара до реальных продаж на маркетплейсе.',
+      badge: 'Почему стоит рассмотреть',
+      facts: [
+        '<strong>Рост LOMKA:</strong> 3 → 5,5 млн ₽',
+        '<strong>Рост Cosmo:</strong> 25 → 35 млн ₽',
+        'Опыт в рекламе, карточках и <strong>операционке</strong>',
+        'Понимание <strong>unit-экономики</strong> и маржи'
+      ]
+    },
+    3: {
+      eyebrow: 'Павел Лесников • Менеджер маркетплейсов с сильной базой в Wildberries',
+      title: 'Практический опыт в Wildberries и понимание e-commerce со стороны бизнеса',
+      lead: 'Работал как внутри компаний, так и со стороны собственного магазина. Понимаю не только кабинет маркетплейса, но и то, как на результат влияют карточка, реклама, поставки, отзывы, логистика и итоговая маржа.\n\nДополнительно усилил себя навыками автоматизации и работы с AI-инструментами.',
+      badge: 'Позиционирование',
+      facts: [
+        '<strong>WB:</strong> реклама, SEO, инфографика',
+        '<strong>Операционка:</strong> отзывы, брак, поставки',
+        '<strong>Селлерский опыт:</strong> свой магазин одежды',
+        '<strong>AI-навык:</strong> автоматизация рутины'
+      ]
+    },
+    4: {
+      eyebrow: 'Павел Лесников • Marketplace Specialist / Wildberries',
+      title: 'Менеджер Wildberries, который смотрит не только на рекламу, но и на итоговую экономику',
+      lead: 'Умею работать не отдельными действиями, а всей связкой целиком: карточка, внутренняя реклама, SEO, поставки, отзывы, остатки и маржа.\n\nЕсть опыт внутри компаний и со стороны собственного магазина, поэтому понимаю не только кабинет, но и бизнес-логику продаж.',
+      badge: 'Для владельца бизнеса',
+      facts: [
+        'Смотрю на <strong>продажи как на систему</strong>',
+        'Не только трафик, но и <strong>конверсия + маржа</strong>',
+        'Понимаю путь от <strong>идеи до поставок</strong>',
+        'Могу быть полезен не только как <strong>исполнитель</strong>'
+      ]
+    },
+    5: {
+      eyebrow: 'Павел Лесников • E-commerce / Wildberries',
+      title: 'От кабинета до реальных продаж на маркетплейсе',
+      lead: 'Мой опыт — это не только ведение кабинета Wildberries, а полный рабочий цикл: реклама, карточки, SEO, поставки, отзывы, логистика и аналитика.\n\nБыл и в роли менеджера, и в роли селлера, поэтому лучше понимаю ограничения бизнеса, стоимость ошибок и точки роста.',
+      badge: 'Full cycle',
+      facts: [
+        '<strong>Менеджер + селлер</strong> в одном профиле',
+        '<strong>Полный цикл:</strong> от карточки до склада',
+        '<strong>Практика:</strong> не теория и не курсы',
+        '<strong>Фокус:</strong> рост продаж без хаоса'
+      ]
+    }
+  };
 
   function isAdmin() {
     return localStorage.getItem(ADMIN_KEY) === 'true';
@@ -314,56 +378,39 @@
     } catch (_) {}
   }
 
-  async function loadHeroContent() {
+  function applyHeroVariant(variantId) {
+    const variant = HERO_VARIANTS[variantId] || HERO_VARIANTS[1];
+    const eyebrow = document.querySelector('[data-hero-eyebrow]');
+    const title = document.querySelector('[data-hero-title]');
     const lead = document.querySelector('[data-hero-lead]');
-    const input = document.querySelector('[data-hero-lead-input]');
-    if (!lead) return;
-    try {
-      const data = await apiGet(`${CONTENT_API}/get?key=hero_lead`);
-      const value = data?.value || '';
-      lead.textContent = value;
-      if (input) input.value = value;
-    } catch (_) {}
+    const badge = document.querySelector('[data-hero-badge]');
+    const factEls = Array.from(document.querySelectorAll('[data-hero-fact]'));
+
+    if (eyebrow) eyebrow.textContent = variant.eyebrow;
+    if (title) {
+      title.textContent = variant.title;
+      title.hidden = !variant.title;
+    }
+    if (lead) lead.textContent = variant.lead;
+    if (badge) badge.textContent = variant.badge;
+    factEls.forEach((el, index) => {
+      el.innerHTML = variant.facts[index] || '';
+    });
+
+    document.body.classList.remove('hero-variant-1', 'hero-variant-2', 'hero-variant-3', 'hero-variant-4', 'hero-variant-5');
+    document.body.classList.add(`hero-variant-${variantId}`);
+    document.querySelectorAll('[data-hero-variant]').forEach((btn) => {
+      btn.classList.toggle('is-active', Number(btn.dataset.heroVariant) === Number(variantId));
+    });
+    localStorage.setItem(HERO_VARIANT_KEY, String(variantId));
   }
 
-  function initHeroAdmin() {
-    const input = document.querySelector('[data-hero-lead-input]');
-    const editBtn = document.querySelector('[data-hero-edit]');
-    const saveBtn = document.querySelector('[data-hero-save]');
-    const cancelBtn = document.querySelector('[data-hero-cancel]');
-    const lead = document.querySelector('[data-hero-lead]');
-    if (!input || !editBtn || !saveBtn || !cancelBtn || !lead) return;
-
-    const setEditing = (editing) => {
-      lead.hidden = editing;
-      input.hidden = !editing;
-      input.classList.toggle('is-editing', editing);
-      editBtn.hidden = editing;
-      saveBtn.hidden = !editing;
-      cancelBtn.hidden = !editing;
-      if (editing) {
-        input.value = lead.textContent || '';
-        setTimeout(() => input.focus(), 10);
-      }
-    };
-
-    editBtn.addEventListener('click', () => {
-      if (!isAdmin()) return;
-      setEditing(true);
+  function initHeroVariants() {
+    const current = Number(localStorage.getItem(HERO_VARIANT_KEY) || '1');
+    document.querySelectorAll('[data-hero-variant]').forEach((btn) => {
+      btn.addEventListener('click', () => applyHeroVariant(Number(btn.dataset.heroVariant)));
     });
-
-    cancelBtn.addEventListener('click', () => {
-      input.value = lead.textContent || '';
-      setEditing(false);
-    });
-
-    saveBtn.addEventListener('click', async () => {
-      if (!isAdmin()) return;
-      const value = input.value;
-      await apiPost(`${CONTENT_API}/save`, { key: 'hero_lead', value });
-      lead.textContent = value;
-      setEditing(false);
-    });
+    applyHeroVariant(current);
   }
 
   function renderGallery(root) {
@@ -514,9 +561,8 @@
     ensureModal();
     initAdminUI();
     initFaqAdmin();
-    initHeroAdmin();
+    initHeroVariants();
     loadProfileImage();
-    loadHeroContent();
     document.querySelectorAll('.experience-gallery').forEach(initGallery);
   });
 })();
