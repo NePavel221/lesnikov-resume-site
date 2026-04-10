@@ -317,23 +317,9 @@
     else el.innerHTML = value;
   }
 
-  function normalizeEditableValue(el, value) {
-    let result = String(value ?? '');
-    if (el.tagName === 'LI') {
-      result = result
-        .replace(/<div><br><\/div>/gi, '')
-        .replace(/<div>/gi, '<br>')
-        .replace(/<\/div>/gi, '')
-        .replace(/^(?:\s|&nbsp;|<br>)+/, '')
-        .replace(/(?:\s|&nbsp;|<br>)+$/, '')
-        .replace(/^([•·\-]\s*)+/, '');
-    }
-    return result;
-  }
-
   function getEditableElementValue(el) {
     if (el.matches('input, textarea')) return el.value;
-    return normalizeEditableValue(el, el.innerHTML);
+    return el.innerHTML;
   }
 
   async function loadEditableContent() {
@@ -417,9 +403,6 @@
         if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
           e.preventDefault();
           stopEditing(true);
-        }
-        if (el.tagName === 'LI' && e.key === 'Enter') {
-          e.preventDefault();
         }
       });
 
