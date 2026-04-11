@@ -958,17 +958,26 @@ body.admin-mode .faq-item-actions {
   grid-column: 1 / -1;
 }
 
+.wb-products-details {
+  width: 100%;
+}
+
 .wb-products-toggle {
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
+  list-style: none;
   background: transparent;
   border: none;
   color: var(--text);
   padding: 0;
   cursor: pointer;
+}
+
+.wb-products-toggle::-webkit-details-marker {
+  display: none;
 }
 
 .wb-products-toggle-icon {
@@ -977,6 +986,7 @@ body.admin-mode .faq-item-actions {
   transition: transform .18s ease;
 }
 
+.wb-products-details[open] .wb-products-toggle-icon,
 .wb-products-collapsible.is-open .wb-products-toggle-icon {
   transform: rotate(180deg);
 }

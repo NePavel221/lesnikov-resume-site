@@ -340,13 +340,15 @@
 
           <section class="wb-workspace-grid">
             <aside class="wb-card wb-sidebar wb-sidebar-wide wb-products-collapsible" data-wb-products-collapsible>
-              <button type="button" class="wb-products-toggle" data-wb-products-toggle aria-expanded="false">
-                <span class="wb-section-title wb-no-span">Товары</span>
-                <span class="wb-products-toggle-icon">▾</span>
-              </button>
-              <div class="wb-products-collapse" data-wb-products-collapse hidden>
+              <details class="wb-products-details" data-wb-products-details>
+                <summary class="wb-products-toggle" data-wb-products-toggle>
+                  <span class="wb-section-title wb-no-span">Товары</span>
+                  <span class="wb-products-toggle-icon">▾</span>
+                </summary>
+                <div class="wb-products-collapse" data-wb-products-collapse>
                 <div id="wb-productsList" class="wb-products-list wb-products-list-wide"></div>
-              </div>
+                </div>
+              </details>
             </aside>
 
             <section class="wb-main-panel">

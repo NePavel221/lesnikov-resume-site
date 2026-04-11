@@ -628,16 +628,13 @@
       });
     });
 
-    const productsToggle = $('wb-products-toggle');
-    const productsCollapse = $('wb-products-collapse');
+    const productsDetails = document.querySelector('[data-wb-products-details]');
     const productsShell = document.querySelector('[data-wb-products-collapsible]');
-    if (productsToggle && productsCollapse && productsShell) {
-      productsToggle.addEventListener('click', () => {
-        const isOpen = !productsCollapse.hidden;
-        productsCollapse.hidden = isOpen;
-        productsShell.classList.toggle('is-open', !isOpen);
-        productsToggle.setAttribute('aria-expanded', String(!isOpen));
+    if (productsDetails && productsShell) {
+      productsDetails.addEventListener('toggle', () => {
+        productsShell.classList.toggle('is-open', productsDetails.open);
       });
+      productsShell.classList.toggle('is-open', productsDetails.open);
     }
 
     $('wb-fillDemo').addEventListener('click', () => {
