@@ -116,8 +116,8 @@
   function renderFaq() {
     const list = document.querySelector('[data-faq-list]');
     if (!list) return;
-    list.innerHTML = faqState.map((item, index) => `
-      <details class="faq-item glass-card" ${index === 0 ? 'open' : ''}>
+    list.innerHTML = faqState.map((item) => `
+      <details class="faq-item glass-card">
         <summary>${escapeHtml(item.question)}</summary>
         <div class="faq-answer">${escapeHtml(item.answer)}</div>
         <div class="faq-item-actions">
