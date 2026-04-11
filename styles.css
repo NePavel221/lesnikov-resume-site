@@ -503,6 +503,10 @@ h3 { margin: 0 0 6px; font-size: 17px; }
 .gallery-nav.next { right: 8px; }
 .gallery-nav:disabled { opacity: 0 !important; cursor: default; }
 
+.experience-gallery[data-hide-nav="true"] .gallery-nav {
+  display: none;
+}
+
 .gallery-controls.overlay-controls {
   position: absolute;
   right: 8px;
@@ -892,7 +896,7 @@ body.admin-mode .faq-item-actions {
 
 .wb-workspace-grid {
   display: grid;
-  grid-template-columns: 340px minmax(0, 1fr);
+  grid-template-columns: 1fr;
   gap: 20px;
   align-items: start;
 }
@@ -913,8 +917,12 @@ body.admin-mode .faq-item-actions {
 
 .wb-sidebar {
   padding: 20px;
-  position: sticky;
-  top: 20px;
+  position: relative;
+  top: 0;
+}
+
+.wb-sidebar-wide {
+  width: 100%;
 }
 
 .wb-sidebar-head {
@@ -998,6 +1006,12 @@ body.admin-mode .faq-item-actions {
   max-height: calc(100vh - 220px);
   overflow: auto;
   padding-right: 4px;
+}
+
+.wb-products-list-wide {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  max-height: none;
+  overflow: visible;
 }
 
 .wb-product-item {
@@ -1160,9 +1174,10 @@ body.admin-mode .faq-item-actions {
 }
 
 @media (max-width: 1180px) {
-  .wb-workspace-grid { grid-template-columns: 1fr; }
-  .wb-sidebar { position: relative; top: 0; }
   .wb-products-list { max-height: 360px; }
+  .wb-products-list-wide {
+    max-height: none;
+  }
 }
 
 @media (max-width: 980px) {
