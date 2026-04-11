@@ -725,31 +725,26 @@ body.admin-mode .hero-inline-actions {
   overflow: hidden;
 }
 
-.faq-item summary {
-  list-style: none;
+.faq-question-btn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
   cursor: pointer;
   padding: 18px 20px;
   font-weight: 700;
   font-size: 15px;
-  position: relative;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  text-align: left;
 }
 
-.faq-item summary::-webkit-details-marker {
-  display: none;
-}
-
-.faq-item summary::after {
-  content: '+';
-  position: absolute;
-  right: 18px;
-  top: 50%;
-  transform: translateY(-50%);
+.faq-toggle-mark {
   font-size: 20px;
   color: #cdb8ff;
-}
-
-.faq-item[open] summary::after {
-  content: '–';
+  flex: 0 0 auto;
 }
 
 .faq-answer {
