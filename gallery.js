@@ -116,10 +116,13 @@
   function renderFaq() {
     const list = document.querySelector('[data-faq-list]');
     if (!list) return;
-    list.innerHTML = faqState.map((item) => `
-      <details class="faq-item glass-card">
-        <summary>${escapeHtml(item.question)}</summary>
-        <div class="faq-answer">${escapeHtml(item.answer)}</div>
+    list.innerHTML = faqState.map((item, index) => `
+      <div class="faq-item glass-card" data-faq-item="${item.id}">
+        <button class="faq-question-btn" type="button" data-faq-toggle="${item.id}" aria-expanded="false">
+          <span>${escapeHtml(item.question)}</span>
+          <span class="faq-toggle-mark">+</span>
+        </button>
+        <div class="faq-answer" data-faq-panel="${item.id}" hidden>${escapeHtml(item.answer)}</div>
         <div class="faq-item-actions">
           <button class="faq-mini-btn" type="button" data-faq-edit="${item.id}">Редактировать</button>
           <button class="faq-mini-btn" type="button" data-faq-up="${item.id}">↑</button>
@@ -130,9 +133,10 @@
           </span>
           <button class="faq-mini-btn danger" type="button" data-faq-delete="${item.id}">Удалить</button>
         </div>
-      </details>
+      </div>
     `).join('');
   }
+
 
   async function refreshFaq() {
     const data = await apiGet(`${FAQ_API}/list`);
@@ -170,11 +174,23 @@
     resetBtn.addEventListener('click', resetForm);
 
     list.addEventListener('click', async (e) => {
+      const toggleBtn = e.target.closest('[data-faq-toggle]');
       const editBtn = e.target.closest('[data-faq-edit]');
       const deleteBtn = e.target.closest('[data-faq-delete]');
       const upBtn = e.target.closest('[data-faq-up]');
       const downBtn = e.target.closest('[data-faq-down]');
       const moveBtn = e.target.closest('[data-faq-move]');
+
+      if (toggleBtn) {
+        const id = Number(toggleBtn.getAttribute('data-faq-toggle'));
+        const panel = list.querySelector(`[data-faq-panel="${id}"]`);
+        const mark = toggleBtn.querySelector('.faq-toggle-mark');
+        const expanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+        toggleBtn.setAttribute('aria-expanded', String(!expanded));
+        if (panel) panel.hidden = expanded;
+        if (mark) mark.textContent = expanded ? '+' : '–';
+        return;
+      }
 
       if (editBtn) {
         if (!isAdmin()) return;
