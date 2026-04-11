@@ -340,7 +340,7 @@
     const demoData = {
       name: 'Кофта Оверсайз',
       sku: '244760348',
-      price: 1923,
+      price: 2753,
       commissionRate: 25,
       adRate: 7,
       taxRate: 8,
