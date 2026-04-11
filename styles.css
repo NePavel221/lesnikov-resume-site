@@ -581,6 +581,39 @@ body.admin-mode .gallery-controls.overlay-controls {
   box-shadow: 0 30px 90px rgba(0,0,0,.45);
 }
 
+.image-lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(14,15,27,0.85);
+  color: white;
+  font-size: 30px;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.image-lightbox-nav.prev { left: 24px; }
+.image-lightbox-nav.next { right: 24px; }
+
+.image-lightbox-count {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 74px;
+  text-align: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(14,15,27,0.78);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #f3e8ff;
+  font-size: 13px;
+}
+
 .image-lightbox-close {
   position: absolute;
   top: 10px;

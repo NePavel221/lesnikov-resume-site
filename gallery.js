@@ -251,6 +251,23 @@
     return canvas.toDataURL('image/jpeg', JPEG_QUALITY);
   }
 
+  const modalState = { items: [], index: 0 };
+
+  function updateModalImage() {
+    const modal = document.getElementById('image-lightbox');
+    if (!modal || !modalState.items.length) return;
+    const img = modal.querySelector('.image-lightbox-image');
+    const count = modal.querySelector('.image-lightbox-count');
+    img.src = modalState.items[modalState.index];
+    if (count) count.textContent = `${modalState.index + 1} / ${modalState.items.length}`;
+  }
+
+  function navigateModal(direction) {
+    if (!modalState.items.length) return;
+    modalState.index = (modalState.index + direction + modalState.items.length) % modalState.items.length;
+    updateModalImage();
+  }
+
   function ensureModal() {
     let modal = document.getElementById('image-lightbox');
     if (modal) return modal;
@@ -261,25 +278,35 @@
       <div class="image-lightbox-backdrop" data-close></div>
       <div class="image-lightbox-dialog">
         <button class="image-lightbox-close" type="button" data-close aria-label="Закрыть">×</button>
+        <button class="image-lightbox-nav prev" type="button" data-modal-prev aria-label="Предыдущее фото">‹</button>
         <img class="image-lightbox-image" alt="Увеличенное фото" />
+        <button class="image-lightbox-nav next" type="button" data-modal-next aria-label="Следующее фото">›</button>
+        <div class="image-lightbox-count">1 / 1</div>
       </div>
     `;
     document.body.appendChild(modal);
     modal.addEventListener('click', (e) => {
       if (e.target.hasAttribute('data-close')) closeModal();
+      if (e.target.hasAttribute('data-modal-prev')) navigateModal(-1);
+      if (e.target.hasAttribute('data-modal-next')) navigateModal(1);
     });
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeModal();
         closeAdminModal();
       }
+      if (!modal.classList.contains('open')) return;
+      if (e.key === 'ArrowLeft') navigateModal(-1);
+      if (e.key === 'ArrowRight') navigateModal(1);
     });
     return modal;
   }
 
-  function openModal(src) {
+  function openModal(items, index = 0) {
     const modal = ensureModal();
-    modal.querySelector('.image-lightbox-image').src = src;
+    modalState.items = items || [];
+    modalState.index = index;
+    updateModalImage();
     modal.classList.add('open');
     document.body.classList.add('modal-open');
   }
@@ -816,7 +843,7 @@
     frameEl.addEventListener('click', (e) => {
       if (!imageEl.src || imageEl.hidden) return;
       if (e.target.closest('.gallery-nav') || e.target.closest('.gallery-controls') || e.target.closest('.gallery-upload') || e.target.closest('.gallery-action')) return;
-      openModal(imageEl.src);
+      openModal(state.items, state.index);
     });
 
     refreshGallery(root).catch(() => renderGallery(root));
