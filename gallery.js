@@ -486,18 +486,28 @@
     }
 
     function loadProducts() {
+      const defaultProduct = { id: makeId(), ...demoData, createdAt: Date.now(), updatedAt: Date.now() };
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) {
-          return [{ id: makeId(), ...demoData, createdAt: Date.now(), updatedAt: Date.now() }];
+          return [defaultProduct];
         }
         const parsed = JSON.parse(raw);
         if (!Array.isArray(parsed) || !parsed.length) {
-          return [{ id: makeId(), ...demoData, createdAt: Date.now(), updatedAt: Date.now() }];
+          return [defaultProduct];
         }
-        return parsed;
+
+        const cleaned = parsed.filter((item) => {
+          const isBlankName = !item?.name || item.name === 'Новый товар';
+          const isBlankSku = !item?.sku;
+          const zeroPrice = !(Number(item?.price) > 0);
+          const zeroCommission = !(Number(item?.commissionRate) > 0);
+          return !(isBlankName && isBlankSku && zeroPrice && zeroCommission);
+        });
+
+        return cleaned.length ? cleaned : [defaultProduct];
       } catch {
-        return [{ id: makeId(), ...demoData, createdAt: Date.now(), updatedAt: Date.now() }];
+        return [defaultProduct];
       }
     }
 
@@ -648,14 +658,15 @@
       if (productsDetails) productsDetails.open = true;
     });
 
-    if (currentProductId) {
+    if (products.length) {
       const current = products.find((item) => item.id === currentProductId) || products[0];
       currentProductId = current.id;
       setFormData(current);
     } else {
-      currentProductId = makeId();
-      setFormData(blankData);
-      autoSaveCurrentProduct();
+      products = [{ id: makeId(), ...demoData, createdAt: Date.now(), updatedAt: Date.now() }];
+      currentProductId = products[0].id;
+      setFormData(products[0]);
+      persistProducts();
     }
 
     renderProducts();
