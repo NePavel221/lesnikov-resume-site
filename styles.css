@@ -865,6 +865,13 @@ body.admin-mode .faq-item-actions {
   padding: 24px;
 }
 
+.wb-app-shell.tilt-card:hover,
+.wb-card.tilt-card:hover {
+  transform: none;
+  border-color: rgba(139, 92, 246, 0.12);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+}
+
 .wb-app-hero {
   display: flex;
   justify-content: space-between;
@@ -959,6 +966,30 @@ body.admin-mode .faq-item-actions {
 
 .wb-search-box {
   margin-bottom: 16px;
+}
+
+.wb-search-box input,
+.wb-form-grid input {
+  width: 100%;
+  border: 1px solid rgba(255,255,255,.06);
+  background: linear-gradient(180deg, rgba(49, 20, 61, 0.92), rgba(40, 16, 50, 0.92));
+  color: var(--text);
+  border-radius: 14px;
+  padding: 14px 16px;
+  outline: none;
+  font-size: 14px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+}
+
+.wb-search-box input::placeholder,
+.wb-form-grid input::placeholder {
+  color: #b795c9;
+}
+
+.wb-search-box input:focus,
+.wb-form-grid input:focus {
+  border-color: rgba(255,79,216,.35);
+  box-shadow: 0 0 0 3px rgba(167,15,232,.14), inset 0 1px 0 rgba(255,255,255,.03);
 }
 
 .wb-products-list {
