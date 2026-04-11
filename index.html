@@ -275,90 +275,194 @@
 
     <section class="section">
       <div class="container">
+        <div class="timeline">
+          <article class="timeline-item card glass-card tilt-card">
+            <div class="experience-layout">
+              <div class="experience-copy">
+                <div class="time-badge">Май 2025 — Апрель 2026 • 11 месяцев</div>
+                <h3>AI-assisted разработка и автоматизация процессов</h3>
+                <ul class="bullet-list compact">
+                  <li>Около <strong>1500+ часов</strong> практики в разработке с помощью нейросетей</li>
+                  <li>Изучал, как собирать рабочие приложения, интерфейсы и внутренние инструменты под конкретную задачу</li>
+                  <li>Сфокусировался не на “болтовне про AI”, а на прикладной пользе: автоматизация рутины, упрощение процессов, быстрый прототипинг</li>
+                  <li>Прокачал навык превращать идею в понятный инструмент, которым реально можно пользоваться в ежедневной работе</li>
+                  <li>Научился совмещать e-commerce-бэкграунд и AI-инструменты, чтобы собирать решения под задачи маркетплейсов и операционки</li>
+                </ul>
+              </div>
+              <div class="experience-gallery" data-gallery-id="aidev">
+                <div class="gallery-topline">
+                  <span class="gallery-label">Фото</span>
+                  <span class="gallery-count" data-count>0 фото</span>
+                </div>
+                <div class="gallery-frame">
+                  <button class="gallery-nav prev" type="button" data-prev aria-label="Предыдущее фото">‹</button>
+                  <div class="gallery-empty" data-empty>Загрузи фото</div>
+                  <img class="gallery-image-bg" data-image-bg alt="" hidden />
+                  <img class="gallery-image" data-image alt="Фото по AI/dev-проектам" hidden />
+                  <button class="gallery-nav next" type="button" data-next aria-label="Следующее фото">›</button>
+                  <div class="gallery-controls overlay-controls">
+                    <label class="gallery-upload" title="Добавить фото">
+                      <input type="file" accept="image/*" multiple data-upload hidden />
+                      <span>＋</span>
+                    </label>
+                    <button class="gallery-action" type="button" data-shift-left title="Сдвинуть текущее фото влево">←</button>
+                    <button class="gallery-action" type="button" data-shift-right title="Сдвинуть текущее фото вправо">→</button>
+                    <button class="gallery-action" type="button" data-remove-current title="Удалить текущее фото">🗑</button>
+                    <button class="gallery-action danger" type="button" data-clear-all title="Удалить все фото">×</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
         <div class="section-head">
-          <div class="section-tag">AI / разработка</div>
-          <h2>11 месяцев изучал разработку с помощью нейросетей и делал прикладные инструменты</h2>
+          <div class="section-tag">Мини-проект</div>
+          <h2>Калькулятор юнит-экономики для Wildberries</h2>
         </div>
-        <div class="grid-2 ai-proof-grid">
-          <article class="card glass-card tilt-card">
-            <p>
-              С мая 2025 по апрель 2026 я целенаправленно изучал разработку с помощью нейросетей и на практике учился превращать идеи в рабочие инструменты.
-              За этот период я уделил этому примерно <strong>1500+ часов</strong>: разбирался в логике приложений, интерфейсах, автоматизации и том, как быстро собирать полезные решения под конкретную задачу.
-            </p>
-            <p>
-              Для меня это не просто «интерес к AI», а реальный прикладной навык. Я умею использовать нейросети не ради красивой болтовни, а чтобы
-              <strong>ускорять рутину, убирать лишние ручные действия и собирать понятные рабочие инструменты</strong>.
-            </p>
-            <ul class="bullet-list compact ai-proof-list">
-              <li>автоматизация рутины и упрощение процессов</li>
-              <li>создание небольших внутренних приложений под задачу</li>
-              <li>быстрый прототипинг интерфейсов и калькуляторов</li>
-              <li>понимание, как совместить e-commerce опыт и AI-инструменты в реальной работе</li>
-            </ul>
-          </article>
-
-          <article class="card glass-card tilt-card wb-widget-card">
-            <div class="wb-widget-head">
-              <div>
-                <div class="section-tag">Мини-проект</div>
-                <h3>Калькулятор юнит-экономики для Wildberries</h3>
-              </div>
-              <div class="wb-widget-badge">MVP</div>
+        <article class="card glass-card tilt-card wb-app-shell">
+          <div class="wb-app-hero">
+            <div>
+              <p class="muted wb-widget-intro">
+                Один из примеров того, что я делал за этот период — прикладной калькулятор юнит-экономики в стилистике Wildberries.
+                Он позволяет быстро ввести параметры артикула, посчитать прибыль, маржу, логистику и сохранить несколько товаров без постоянной возни с Excel-таблицами.
+              </p>
             </div>
-            <p class="muted wb-widget-intro">
-              Один из примеров того, что я делал за этот период — практичный мини-инструмент для расчёта юнит-экономики.
-              Идея простая: не лезть каждый раз в громоздкие таблицы, а быстро ввести параметры артикула и сразу увидеть прибыль, маржу и ключевые расходы.
-            </p>
-
-            <div class="wb-widget-grid">
-              <label>
-                <span>Цена продажи, ₽</span>
-                <input id="wb-price" type="number" step="0.01" value="1923" />
-              </label>
-              <label>
-                <span>Себестоимость, ₽</span>
-                <input id="wb-cost" type="number" step="0.01" value="690" />
-              </label>
-              <label>
-                <span>Комиссия WB, %</span>
-                <input id="wb-commission" type="number" step="0.01" value="25" />
-              </label>
-              <label>
-                <span>Реклама (DRR), %</span>
-                <input id="wb-ad" type="number" step="0.01" value="7" />
-              </label>
-              <label>
-                <span>Налог, %</span>
-                <input id="wb-tax" type="number" step="0.01" value="8" />
-              </label>
-              <label>
-                <span>Логистика и хранение, ₽</span>
-                <input id="wb-logistics" type="number" step="0.01" value="118" />
-              </label>
-              <label>
-                <span>Фулфилмент / упаковка, ₽</span>
-                <input id="wb-fulfillment" type="number" step="0.01" value="35" />
-              </label>
-              <label>
-                <span>Прочие расходы, ₽</span>
-                <input id="wb-other" type="number" step="0.01" value="0" />
-              </label>
+            <div class="wb-hero-actions">
+              <button id="wb-fillDemo" type="button" class="ghost-btn">Подставить пример</button>
+              <button id="wb-newProduct" type="button" class="primary-btn">Новый товар</button>
             </div>
+          </div>
 
-            <div class="wb-widget-results">
-              <div class="wb-result-box">
-                <span class="muted">Прибыль</span>
-                <strong id="wb-profit">—</strong>
+          <section class="wb-workspace-grid">
+            <aside class="wb-card wb-sidebar">
+              <div class="wb-sidebar-head">
+                <div>
+                  <div class="wb-section-title wb-no-span">Товары</div>
+                  <div class="wb-sidebar-subtitle">Сохраняются в браузере автоматически</div>
+                </div>
+                <div class="wb-counter" id="wb-productCount">0</div>
               </div>
-              <div class="wb-result-box">
-                <span class="muted">Маржа</span>
-                <strong id="wb-margin">—</strong>
-              </div>
-            </div>
 
-            <div class="wb-widget-breakdown" id="wb-breakdown"></div>
-          </article>
-        </div>
+              <label class="wb-search-box">
+                <span>Поиск по названию или артикулу</span>
+                <input id="wb-productSearch" placeholder="Например, кофта или 244760348" />
+              </label>
+
+              <div id="wb-productsList" class="wb-products-list"></div>
+            </aside>
+
+            <section class="wb-main-panel">
+              <div class="wb-grid wb-two-col">
+                <form id="wb-calculator" class="wb-card wb-form-grid">
+                  <div class="wb-section-title">Товар</div>
+                  <label>
+                    <span>Название товара</span>
+                    <input id="wb-name" value="Кофта Оверсайз" />
+                  </label>
+                  <label>
+                    <span>Артикул</span>
+                    <input id="wb-sku" value="244760348" />
+                  </label>
+                  <label>
+                    <span>Цена продажи, ₽</span>
+                    <input id="wb-price" type="number" step="0.01" value="1923" />
+                  </label>
+                  <label>
+                    <span>Комиссия WB, %</span>
+                    <input id="wb-commissionRate" type="number" step="0.01" value="25" />
+                  </label>
+                  <label>
+                    <span>DRR, %</span>
+                    <input id="wb-adRate" type="number" step="0.01" value="7" />
+                  </label>
+                  <label>
+                    <span>Налог, %</span>
+                    <input id="wb-taxRate" type="number" step="0.01" value="8" />
+                  </label>
+                  <label>
+                    <span>Эквайринг, %</span>
+                    <input id="wb-acquiringRate" type="number" step="0.01" value="2" />
+                  </label>
+                  <label>
+                    <span>Брак, %</span>
+                    <input id="wb-defectRate" type="number" step="0.01" value="2" />
+                  </label>
+                  <label>
+                    <span>Доставка на склад, ₽</span>
+                    <input id="wb-deliveryToWarehouse" type="number" step="0.01" value="0" />
+                  </label>
+                  <label>
+                    <span>Фулфилмент, ₽</span>
+                    <input id="wb-fulfillment" type="number" step="0.01" value="0" />
+                  </label>
+
+                  <div class="wb-section-title wb-full">Габариты и логистика</div>
+                  <label>
+                    <span>Процент выкупа, %</span>
+                    <input id="wb-buyoutRate" type="number" step="0.01" value="33" />
+                  </label>
+                  <label>
+                    <span>Ширина, см</span>
+                    <input id="wb-width" type="number" step="0.01" value="30" />
+                  </label>
+                  <label>
+                    <span>Длина, см</span>
+                    <input id="wb-length" type="number" step="0.01" value="40" />
+                  </label>
+                  <label>
+                    <span>Высота, см</span>
+                    <input id="wb-height" type="number" step="0.01" value="4" />
+                  </label>
+                  <label>
+                    <span>Логистика: первый литр, ₽</span>
+                    <input id="wb-logisticsFirstLiter" type="number" step="0.01" value="46" />
+                  </label>
+                  <label>
+                    <span>Логистика: доп. литр, ₽</span>
+                    <input id="wb-logisticsExtraLiter" type="number" step="0.01" value="14" />
+                  </label>
+                  <label>
+                    <span>Хранение: первый литр/день, ₽</span>
+                    <input id="wb-storageFirstLiter" type="number" step="0.01" value="0.1" />
+                  </label>
+                  <label>
+                    <span>Хранение: доп. литр/день, ₽</span>
+                    <input id="wb-storageExtraLiter" type="number" step="0.01" value="0.1" />
+                  </label>
+                  <label>
+                    <span>Количество дней хранения</span>
+                    <input id="wb-storageDays" type="number" step="1" value="45" />
+                  </label>
+                </form>
+
+                <aside class="wb-card wb-results">
+                  <div class="wb-section-title">Результат</div>
+                  <div class="wb-result-main">
+                    <div>
+                      <span class="muted">Прибыль</span>
+                      <strong id="wb-profit">—</strong>
+                    </div>
+                    <div>
+                      <span class="muted">Маржа</span>
+                      <strong id="wb-margin">—</strong>
+                    </div>
+                  </div>
+
+                  <div class="wb-breakdown" id="wb-breakdown"></div>
+
+                  <div class="wb-formula-note">
+                    Это встроенная демо-версия калькулятора как пример того, что я могу собирать прикладные рабочие инструменты под реальные задачи в e-commerce.
+                  </div>
+                </aside>
+              </div>
+            </section>
+          </section>
+        </article>
       </div>
     </section>
 

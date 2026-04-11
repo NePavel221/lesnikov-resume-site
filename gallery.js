@@ -322,51 +322,338 @@
     return `${(Number.isFinite(n) ? n : 0).toFixed(2)}%`;
   }
 
+  function number(n, digits = 2) {
+    return new Intl.NumberFormat('ru-RU', { maximumFractionDigits: digits }).format(Number.isFinite(n) ? n : 0);
+  }
+
   function initWbWidget() {
-    const ids = ['wb-price','wb-cost','wb-commission','wb-ad','wb-tax','wb-logistics','wb-fulfillment','wb-other'];
-    const els = ids.map((id) => document.getElementById(id));
-    if (els.some((el) => !el)) return;
-
-    const profitEl = document.getElementById('wb-profit');
-    const marginEl = document.getElementById('wb-margin');
-    const breakdownEl = document.getElementById('wb-breakdown');
-
-    const get = (id) => parseFloat(document.getElementById(id).value) || 0;
-
-    const render = () => {
-      const price = get('wb-price');
-      const cost = get('wb-cost');
-      const commission = price * get('wb-commission') / 100;
-      const advertising = price * get('wb-ad') / 100;
-      const tax = price * get('wb-tax') / 100;
-      const logistics = get('wb-logistics');
-      const fulfillment = get('wb-fulfillment');
-      const other = get('wb-other');
-      const profit = price - cost - commission - advertising - tax - logistics - fulfillment - other;
-      const margin = price > 0 ? (profit / price) * 100 : 0;
-
-      profitEl.textContent = money(profit);
-      marginEl.textContent = percent(margin);
-
-      const rows = [
-        ['Себестоимость', money(cost)],
-        ['Комиссия WB', money(commission)],
-        ['Реклама', money(advertising)],
-        ['Налог', money(tax)],
-        ['Логистика и хранение', money(logistics)],
-        ['Фулфилмент / упаковка', money(fulfillment)],
-        ['Прочие расходы', money(other)],
-        ['Итоговая прибыль', money(profit)]
-      ];
-
-      breakdownEl.innerHTML = rows.map((row, index) => {
-        const extra = index === rows.length - 1 ? (profit >= 0 ? 'profit-positive' : 'profit-negative') : '';
-        return `<div class="wb-breakdown-row ${extra}"><span>${row[0]}</span><span>${row[1]}</span></div>`;
-      }).join('');
+    const $ = (id) => document.getElementById(id);
+    const STORAGE_KEY = 'wb-unit-economics-products-v1';
+    const defaultWbRates = {
+      acquiringRate: 2,
+      logisticsFirstLiter: 46,
+      logisticsExtraLiter: 14,
+      storageFirstLiter: 0.1,
+      storageExtraLiter: 0.1,
     };
 
-    els.forEach((el) => el.addEventListener('input', render));
-    render();
+    const demoData = {
+      name: 'Кофта Оверсайз',
+      sku: '244760348',
+      price: 1923,
+      commissionRate: 25,
+      adRate: 7,
+      taxRate: 8,
+      ...defaultWbRates,
+      defectRate: 2,
+      deliveryToWarehouse: 0,
+      fulfillment: 0,
+      buyoutRate: 33,
+      width: 30,
+      length: 40,
+      height: 4,
+      storageDays: 45,
+    };
+
+    const blankData = {
+      name: 'Новый товар',
+      sku: '',
+      price: 0,
+      commissionRate: 0,
+      adRate: 0,
+      taxRate: 0,
+      ...defaultWbRates,
+      defectRate: 0,
+      deliveryToWarehouse: 0,
+      fulfillment: 0,
+      buyoutRate: 100,
+      width: 0,
+      length: 0,
+      height: 0,
+      storageDays: 0,
+    };
+
+    const fields = Object.keys(demoData).map((key) => `wb-${key}`);
+    if (!$('wb-price') || !$('wb-productsList')) return;
+
+    let products = loadProducts();
+    let currentProductId = products[0]?.id || null;
+    let autoSaveTimer = null;
+
+    function makeId() {
+      return `product-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    }
+
+    function getValue(id) {
+      return parseFloat($(id).value) || 0;
+    }
+
+    function getFormData() {
+      return {
+        name: $('wb-name').value.trim() || 'Без названия',
+        sku: $('wb-sku').value.trim(),
+        price: getValue('wb-price'),
+        commissionRate: getValue('wb-commissionRate'),
+        adRate: getValue('wb-adRate'),
+        taxRate: getValue('wb-taxRate'),
+        acquiringRate: getValue('wb-acquiringRate'),
+        defectRate: getValue('wb-defectRate'),
+        deliveryToWarehouse: getValue('wb-deliveryToWarehouse'),
+        fulfillment: getValue('wb-fulfillment'),
+        buyoutRate: getValue('wb-buyoutRate'),
+        width: getValue('wb-width'),
+        length: getValue('wb-length'),
+        height: getValue('wb-height'),
+        logisticsFirstLiter: getValue('wb-logisticsFirstLiter'),
+        logisticsExtraLiter: getValue('wb-logisticsExtraLiter'),
+        storageFirstLiter: getValue('wb-storageFirstLiter'),
+        storageExtraLiter: getValue('wb-storageExtraLiter'),
+        storageDays: getValue('wb-storageDays'),
+      };
+    }
+
+    function setFormData(data) {
+      Object.keys(demoData).forEach((field) => {
+        const el = $(`wb-${field}`);
+        if (el && data[field] !== undefined) el.value = data[field];
+      });
+      $('wb-name').value = data.name ?? '';
+      $('wb-sku').value = data.sku ?? '';
+    }
+
+    function calculate(data = getFormData()) {
+      const price = Number(data.price) || 0;
+      const commissionRate = (Number(data.commissionRate) || 0) / 100;
+      const adRate = (Number(data.adRate) || 0) / 100;
+      const taxRate = (Number(data.taxRate) || 0) / 100;
+      const acquiringRate = (Number(data.acquiringRate) || 0) / 100;
+      const defectRate = (Number(data.defectRate) || 0) / 100;
+      const deliveryToWarehouse = Number(data.deliveryToWarehouse) || 0;
+      const fulfillment = Number(data.fulfillment) || 0;
+      const buyoutRate = (Number(data.buyoutRate) || 0) / 100;
+      const width = Number(data.width) || 0;
+      const length = Number(data.length) || 0;
+      const height = Number(data.height) || 0;
+      const logisticsFirstLiter = Number(data.logisticsFirstLiter) || 0;
+      const logisticsExtraLiter = Number(data.logisticsExtraLiter) || 0;
+      const storageFirstLiter = Number(data.storageFirstLiter) || 0;
+      const storageExtraLiter = Number(data.storageExtraLiter) || 0;
+      const storageDays = Number(data.storageDays) || 0;
+
+      const commission = price * commissionRate;
+      const advertising = price * adRate;
+      const tax = price * taxRate;
+      const acquiring = price * acquiringRate;
+      const defects = price * defectRate;
+      const volume = (width * length * height) / 1000;
+      const litersAboveFirst = Math.max(0, volume - 1);
+      const baseLogistics = logisticsFirstLiter + litersAboveFirst * logisticsExtraLiter;
+      const logistics = buyoutRate > 0
+        ? (baseLogistics + (1 - buyoutRate) * baseLogistics) / buyoutRate
+        : 0;
+      const storage = (storageFirstLiter + litersAboveFirst * storageExtraLiter) * storageDays;
+      const profit = price - commission - advertising - tax - deliveryToWarehouse - fulfillment - logistics - storage - acquiring - defects;
+      const margin = price > 0 ? (profit / price) * 100 : 0;
+
+      return { commission, advertising, tax, acquiring, defects, volume, logistics, storage, profit, margin };
+    }
+
+    function updateResults() {
+      const data = getFormData();
+      const result = calculate(data);
+
+      $('wb-profit').textContent = money(result.profit);
+      $('wb-margin').textContent = percent(result.margin);
+
+      const items = [
+        ['Комиссия WB', money(result.commission)],
+        ['Реклама', money(result.advertising)],
+        ['Налог', money(result.tax)],
+        ['Эквайринг', money(result.acquiring)],
+        ['Брак', money(result.defects)],
+        ['Объём товара', `${number(result.volume, 2)} л`],
+        ['Логистика WB', money(result.logistics)],
+        ['Хранение', money(result.storage)],
+        ['Доставка на склад', money(data.deliveryToWarehouse)],
+        ['Фулфилмент', money(data.fulfillment)],
+        ['Итоговая маржа', percent(result.margin)],
+      ];
+
+      $('wb-breakdown').innerHTML = items.map(([label, value], idx) => {
+        const extra = idx === items.length - 1 ? (result.profit >= 0 ? 'profit-positive' : 'profit-negative') : '';
+        return `<div class="wb-breakdown-row ${extra}"><span>${label}</span><span>${value}</span></div>`;
+      }).join('');
+    }
+
+    function loadProducts() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+          return [{ id: makeId(), ...demoData, createdAt: Date.now(), updatedAt: Date.now() }];
+        }
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) && parsed.length ? parsed : [{ id: makeId(), ...demoData, createdAt: Date.now(), updatedAt: Date.now() }];
+      } catch {
+        return [{ id: makeId(), ...demoData, createdAt: Date.now(), updatedAt: Date.now() }];
+      }
+    }
+
+    function persistProducts() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
+    }
+
+    function escapeHtmlLocal(value) {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function renderProducts() {
+      const query = $('wb-productSearch').value.trim().toLowerCase();
+      const filtered = products.filter((product) => {
+        const title = `${product.name || ''} ${product.sku || ''}`.toLowerCase();
+        return title.includes(query);
+      });
+
+      $('wb-productCount').textContent = products.length;
+
+      if (!filtered.length) {
+        $('wb-productsList').innerHTML = '<div class="wb-empty-state">Ничего не найдено. Попробуй другой запрос или создай новый товар.</div>';
+        return;
+      }
+
+      $('wb-productsList').innerHTML = filtered.map((product) => {
+        const result = calculate(product);
+        return `
+          <div class="wb-product-item ${product.id === currentProductId ? 'active' : ''}" data-id="${product.id}">
+            <div class="wb-product-item-head">
+              <strong>${escapeHtmlLocal(product.name || 'Без названия')}</strong>
+              <button type="button" class="wb-delete-chip" data-delete-id="${product.id}" aria-label="Удалить товар">×</button>
+            </div>
+            <div class="wb-product-line"><span>Артикул: ${escapeHtmlLocal(product.sku || '—')}</span><span>${money(result.profit)}</span></div>
+            <div class="wb-product-line"><span>Маржа</span><span>${percent(result.margin)}</span></div>
+          </div>
+        `;
+      }).join('');
+
+      document.querySelectorAll('.wb-product-item').forEach((item) => {
+        item.addEventListener('click', () => openProduct(item.dataset.id));
+      });
+
+      document.querySelectorAll('.wb-delete-chip').forEach((button) => {
+        button.addEventListener('click', (event) => {
+          event.stopPropagation();
+          deleteProductById(button.dataset.deleteId);
+        });
+      });
+    }
+
+    function openProduct(id) {
+      autoSaveCurrentProduct();
+      const product = products.find((item) => item.id === id);
+      if (!product) return;
+      currentProductId = id;
+      setFormData(product);
+      updateResults();
+      renderProducts();
+    }
+
+    function upsertCurrentProduct() {
+      const data = getFormData();
+      if (!currentProductId) currentProductId = makeId();
+
+      const existingIndex = products.findIndex((item) => item.id === currentProductId);
+      const nextProduct = {
+        id: currentProductId,
+        ...data,
+        createdAt: existingIndex >= 0 ? products[existingIndex].createdAt : Date.now(),
+        updatedAt: Date.now(),
+      };
+
+      if (existingIndex >= 0) {
+        products[existingIndex] = nextProduct;
+      } else {
+        products.unshift(nextProduct);
+      }
+
+      persistProducts();
+    }
+
+    function autoSaveCurrentProduct() {
+      upsertCurrentProduct();
+      renderProducts();
+    }
+
+    function scheduleAutoSave() {
+      clearTimeout(autoSaveTimer);
+      autoSaveTimer = setTimeout(() => {
+        autoSaveCurrentProduct();
+      }, 300);
+    }
+
+    function createNewProduct() {
+      autoSaveCurrentProduct();
+      currentProductId = makeId();
+      setFormData(blankData);
+      updateResults();
+      autoSaveCurrentProduct();
+    }
+
+    function deleteProductById(id) {
+      const target = products.find((item) => item.id === id);
+      if (!target) return;
+
+      const ok = window.confirm(`Удалить товар "${target.name || 'Без названия'}"?`);
+      if (!ok) return;
+
+      products = products.filter((item) => item.id !== id);
+
+      if (!products.length) {
+        const fresh = { id: makeId(), ...blankData, createdAt: Date.now(), updatedAt: Date.now() };
+        products = [fresh];
+      }
+
+      if (currentProductId === id) {
+        currentProductId = products[0].id;
+        setFormData(products[0]);
+        updateResults();
+      }
+
+      persistProducts();
+      renderProducts();
+    }
+
+    fields.forEach((fieldId) => {
+      const el = $(fieldId);
+      if (el) el.addEventListener('input', () => {
+        updateResults();
+        scheduleAutoSave();
+      });
+    });
+
+    $('wb-productSearch').addEventListener('input', renderProducts);
+    $('wb-fillDemo').addEventListener('click', () => {
+      setFormData(demoData);
+      updateResults();
+      autoSaveCurrentProduct();
+    });
+    $('wb-newProduct').addEventListener('click', createNewProduct);
+
+    if (currentProductId) {
+      const current = products.find((item) => item.id === currentProductId) || products[0];
+      currentProductId = current.id;
+      setFormData(current);
+    } else {
+      currentProductId = makeId();
+      setFormData(blankData);
+      autoSaveCurrentProduct();
+    }
+
+    renderProducts();
+    updateResults();
   }
 
   function renderGallery(root) {
