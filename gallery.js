@@ -503,6 +503,11 @@
           const zeroPrice = !(Number(item?.price) > 0);
           const zeroCommission = !(Number(item?.commissionRate) > 0);
           return !(isBlankName && isBlankSku && zeroPrice && zeroCommission);
+        }).map((item) => {
+          if (item?.name === 'Кофта Оверсайз' && item?.sku === '244760348' && Number(item?.price) === 1923) {
+            return { ...item, price: 2753, updatedAt: Date.now() };
+          }
+          return item;
         });
 
         return cleaned.length ? cleaned : [defaultProduct];
