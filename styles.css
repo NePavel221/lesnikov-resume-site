@@ -933,20 +933,6 @@ body.admin-mode .faq-item-actions {
   margin-bottom: 14px;
 }
 
-.wb-sidebar-subtitle {
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.wb-counter {
-  min-width: 42px;
-  height: 42px;
-  display: grid;
-  place-items: center;
-  border-radius: 14px;
-  background: rgba(255,255,255,.06);
-  font-weight: 700;
-}
 
 .wb-form-grid {
   padding: 24px;
@@ -972,11 +958,33 @@ body.admin-mode .faq-item-actions {
   grid-column: 1 / -1;
 }
 
-.wb-search-box {
-  margin-bottom: 16px;
+.wb-products-toggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  padding: 0;
+  cursor: pointer;
 }
 
-.wb-search-box input,
+.wb-products-toggle-icon {
+  font-size: 18px;
+  color: #d7b6f2;
+  transition: transform .18s ease;
+}
+
+.wb-products-collapsible.is-open .wb-products-toggle-icon {
+  transform: rotate(180deg);
+}
+
+.wb-products-collapse {
+  margin-top: 14px;
+}
+
 .wb-form-grid input {
   width: 100%;
   border: 1px solid rgba(255,255,255,.06);
@@ -1006,6 +1014,17 @@ body.admin-mode .faq-item-actions {
   max-height: calc(100vh - 220px);
   overflow: auto;
   padding-right: 4px;
+}
+
+.wb-form-grid input[type="number"]::-webkit-outer-spin-button,
+.wb-form-grid input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.wb-form-grid input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 .wb-products-list-wide {

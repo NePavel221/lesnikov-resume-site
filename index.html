@@ -339,21 +339,14 @@
           </div>
 
           <section class="wb-workspace-grid">
-            <aside class="wb-card wb-sidebar wb-sidebar-wide">
-              <div class="wb-sidebar-head">
-                <div>
-                  <div class="wb-section-title wb-no-span">Товары</div>
-                  <div class="wb-sidebar-subtitle">Сохраняются в браузере автоматически</div>
-                </div>
-                <div class="wb-counter" id="wb-productCount">0</div>
+            <aside class="wb-card wb-sidebar wb-sidebar-wide wb-products-collapsible" data-wb-products-collapsible>
+              <button type="button" class="wb-products-toggle" data-wb-products-toggle aria-expanded="false">
+                <span class="wb-section-title wb-no-span">Товары</span>
+                <span class="wb-products-toggle-icon">▾</span>
+              </button>
+              <div class="wb-products-collapse" data-wb-products-collapse hidden>
+                <div id="wb-productsList" class="wb-products-list wb-products-list-wide"></div>
               </div>
-
-              <label class="wb-search-box">
-                <span>Поиск по названию или артикулу</span>
-                <input id="wb-productSearch" placeholder="Например, кофта или 244760348" />
-              </label>
-
-              <div id="wb-productsList" class="wb-products-list wb-products-list-wide"></div>
             </aside>
 
             <section class="wb-main-panel">

@@ -512,16 +512,10 @@
     }
 
     function renderProducts() {
-      const query = $('wb-productSearch').value.trim().toLowerCase();
-      const filtered = products.filter((product) => {
-        const title = `${product.name || ''} ${product.sku || ''}`.toLowerCase();
-        return title.includes(query);
-      });
-
-      $('wb-productCount').textContent = products.length;
+      const filtered = products;
 
       if (!filtered.length) {
-        $('wb-productsList').innerHTML = '<div class="wb-empty-state">Ничего не найдено. Попробуй другой запрос или создай новый товар.</div>';
+        $('wb-productsList').innerHTML = '<div class="wb-empty-state">Пока нет сохранённых товаров. Нажми «Новый товар», чтобы создать первый.</div>';
         return;
       }
 
@@ -634,7 +628,18 @@
       });
     });
 
-    $('wb-productSearch').addEventListener('input', renderProducts);
+    const productsToggle = $('wb-products-toggle');
+    const productsCollapse = $('wb-products-collapse');
+    const productsShell = document.querySelector('[data-wb-products-collapsible]');
+    if (productsToggle && productsCollapse && productsShell) {
+      productsToggle.addEventListener('click', () => {
+        const isOpen = !productsCollapse.hidden;
+        productsCollapse.hidden = isOpen;
+        productsShell.classList.toggle('is-open', !isOpen);
+        productsToggle.setAttribute('aria-expanded', String(!isOpen));
+      });
+    }
+
     $('wb-fillDemo').addEventListener('click', () => {
       setFormData(demoData);
       updateResults();
