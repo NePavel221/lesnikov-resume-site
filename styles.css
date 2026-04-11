@@ -861,6 +861,112 @@ body.admin-mode .faq-item-actions {
   font-size: 13px;
 }
 
+.ai-proof-grid {
+  align-items: start;
+}
+
+.ai-proof-list {
+  margin-top: 14px;
+}
+
+.wb-widget-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.wb-widget-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+}
+
+.wb-widget-badge {
+  min-width: 54px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.06);
+  color: #f0d8ff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.wb-widget-intro {
+  max-width: none;
+}
+
+.wb-widget-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.wb-widget-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wb-widget-grid input {
+  width: 100%;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  border-radius: 14px;
+  padding: 13px 14px;
+  outline: none;
+  font-size: 14px;
+}
+
+.wb-widget-grid input:focus {
+  border-color: rgba(236,72,153,.55);
+  box-shadow: 0 0 0 4px rgba(139,92,246,.12);
+}
+
+.wb-widget-results {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.wb-result-box {
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.wb-result-box strong {
+  display: block;
+  margin-top: 6px;
+  font-size: clamp(24px, 2.8vw, 34px);
+}
+
+.wb-widget-breakdown {
+  display: grid;
+  gap: 10px;
+}
+
+.wb-breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 13px 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.04);
+}
+
+.wb-breakdown-row.profit-positive span:last-child {
+  color: #62e2ad;
+}
+
+.wb-breakdown-row.profit-negative span:last-child {
+  color: #ff8ea7;
+}
+
 .contact-links {
   display: flex;
   flex-direction: column;
@@ -908,4 +1014,6 @@ body.admin-mode .faq-item-actions {
   .hero-orb, .hero-ring { display: none; }
   .tilt-card:hover { transform: translateY(-3px); }
   .gallery-frame { width: 100%; max-width: 220px; }
+  .wb-widget-grid,
+  .wb-widget-results { grid-template-columns: 1fr; }
 }

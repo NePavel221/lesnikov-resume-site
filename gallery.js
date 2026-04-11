@@ -314,6 +314,60 @@
     } catch (_) {}
   }
 
+  function money(n) {
+    return new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 2 }).format(Number.isFinite(n) ? n : 0);
+  }
+
+  function percent(n) {
+    return `${(Number.isFinite(n) ? n : 0).toFixed(2)}%`;
+  }
+
+  function initWbWidget() {
+    const ids = ['wb-price','wb-cost','wb-commission','wb-ad','wb-tax','wb-logistics','wb-fulfillment','wb-other'];
+    const els = ids.map((id) => document.getElementById(id));
+    if (els.some((el) => !el)) return;
+
+    const profitEl = document.getElementById('wb-profit');
+    const marginEl = document.getElementById('wb-margin');
+    const breakdownEl = document.getElementById('wb-breakdown');
+
+    const get = (id) => parseFloat(document.getElementById(id).value) || 0;
+
+    const render = () => {
+      const price = get('wb-price');
+      const cost = get('wb-cost');
+      const commission = price * get('wb-commission') / 100;
+      const advertising = price * get('wb-ad') / 100;
+      const tax = price * get('wb-tax') / 100;
+      const logistics = get('wb-logistics');
+      const fulfillment = get('wb-fulfillment');
+      const other = get('wb-other');
+      const profit = price - cost - commission - advertising - tax - logistics - fulfillment - other;
+      const margin = price > 0 ? (profit / price) * 100 : 0;
+
+      profitEl.textContent = money(profit);
+      marginEl.textContent = percent(margin);
+
+      const rows = [
+        ['Себестоимость', money(cost)],
+        ['Комиссия WB', money(commission)],
+        ['Реклама', money(advertising)],
+        ['Налог', money(tax)],
+        ['Логистика и хранение', money(logistics)],
+        ['Фулфилмент / упаковка', money(fulfillment)],
+        ['Прочие расходы', money(other)],
+        ['Итоговая прибыль', money(profit)]
+      ];
+
+      breakdownEl.innerHTML = rows.map((row, index) => {
+        const extra = index === rows.length - 1 ? (profit >= 0 ? 'profit-positive' : 'profit-negative') : '';
+        return `<div class="wb-breakdown-row ${extra}"><span>${row[0]}</span><span>${row[1]}</span></div>`;
+      }).join('');
+    };
+
+    els.forEach((el) => el.addEventListener('input', render));
+    render();
+  }
 
   function renderGallery(root) {
     const state = getState(root);
@@ -464,6 +518,7 @@
     initAdminUI();
     initFaqAdmin();
     loadProfileImage();
+    initWbWidget();
     document.querySelectorAll('.experience-gallery').forEach(initGallery);
   });
 })();

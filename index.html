@@ -275,6 +275,95 @@
 
     <section class="section">
       <div class="container">
+        <div class="section-head">
+          <div class="section-tag">AI / разработка</div>
+          <h2>11 месяцев изучал разработку с помощью нейросетей и делал прикладные инструменты</h2>
+        </div>
+        <div class="grid-2 ai-proof-grid">
+          <article class="card glass-card tilt-card">
+            <p>
+              С мая 2025 по апрель 2026 я целенаправленно изучал разработку с помощью нейросетей и на практике учился превращать идеи в рабочие инструменты.
+              За этот период я уделил этому примерно <strong>1500+ часов</strong>: разбирался в логике приложений, интерфейсах, автоматизации и том, как быстро собирать полезные решения под конкретную задачу.
+            </p>
+            <p>
+              Для меня это не просто «интерес к AI», а реальный прикладной навык. Я умею использовать нейросети не ради красивой болтовни, а чтобы
+              <strong>ускорять рутину, убирать лишние ручные действия и собирать понятные рабочие инструменты</strong>.
+            </p>
+            <ul class="bullet-list compact ai-proof-list">
+              <li>автоматизация рутины и упрощение процессов</li>
+              <li>создание небольших внутренних приложений под задачу</li>
+              <li>быстрый прототипинг интерфейсов и калькуляторов</li>
+              <li>понимание, как совместить e-commerce опыт и AI-инструменты в реальной работе</li>
+            </ul>
+          </article>
+
+          <article class="card glass-card tilt-card wb-widget-card">
+            <div class="wb-widget-head">
+              <div>
+                <div class="section-tag">Мини-проект</div>
+                <h3>Калькулятор юнит-экономики для Wildberries</h3>
+              </div>
+              <div class="wb-widget-badge">MVP</div>
+            </div>
+            <p class="muted wb-widget-intro">
+              Один из примеров того, что я делал за этот период — практичный мини-инструмент для расчёта юнит-экономики.
+              Идея простая: не лезть каждый раз в громоздкие таблицы, а быстро ввести параметры артикула и сразу увидеть прибыль, маржу и ключевые расходы.
+            </p>
+
+            <div class="wb-widget-grid">
+              <label>
+                <span>Цена продажи, ₽</span>
+                <input id="wb-price" type="number" step="0.01" value="1923" />
+              </label>
+              <label>
+                <span>Себестоимость, ₽</span>
+                <input id="wb-cost" type="number" step="0.01" value="690" />
+              </label>
+              <label>
+                <span>Комиссия WB, %</span>
+                <input id="wb-commission" type="number" step="0.01" value="25" />
+              </label>
+              <label>
+                <span>Реклама (DRR), %</span>
+                <input id="wb-ad" type="number" step="0.01" value="7" />
+              </label>
+              <label>
+                <span>Налог, %</span>
+                <input id="wb-tax" type="number" step="0.01" value="8" />
+              </label>
+              <label>
+                <span>Логистика и хранение, ₽</span>
+                <input id="wb-logistics" type="number" step="0.01" value="118" />
+              </label>
+              <label>
+                <span>Фулфилмент / упаковка, ₽</span>
+                <input id="wb-fulfillment" type="number" step="0.01" value="35" />
+              </label>
+              <label>
+                <span>Прочие расходы, ₽</span>
+                <input id="wb-other" type="number" step="0.01" value="0" />
+              </label>
+            </div>
+
+            <div class="wb-widget-results">
+              <div class="wb-result-box">
+                <span class="muted">Прибыль</span>
+                <strong id="wb-profit">—</strong>
+              </div>
+              <div class="wb-result-box">
+                <span class="muted">Маржа</span>
+                <strong id="wb-margin">—</strong>
+              </div>
+            </div>
+
+            <div class="wb-widget-breakdown" id="wb-breakdown"></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
         <div class="grid-2">
           <article class="card glass-card tilt-card">
             <div class="section-tag">Обучение</div>
