@@ -289,6 +289,7 @@
       if (e.target.hasAttribute('data-close')) closeModal();
       if (e.target.hasAttribute('data-modal-prev')) navigateModal(-1);
       if (e.target.hasAttribute('data-modal-next')) navigateModal(1);
+      if (e.target.classList.contains('image-lightbox-image')) navigateModal(1);
     });
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
