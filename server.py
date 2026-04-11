@@ -99,12 +99,59 @@ def list_gallery(gallery_id):
     return items
 
 
+def escape_html(value):
+    return (str(value)
+            .replace('&', '&amp;')
+            .replace('<', '&lt;')
+            .replace('>', '&gt;')
+            .replace('"', '&quot;')
+            .replace("'", '&#39;'))
+
+
+def render_faq_html():
+    conn = db()
+    rows = conn.execute('SELECT id, question, answer FROM faq ORDER BY sort_order, id').fetchall()
+    conn.close()
+    parts = []
+    for idx, row in enumerate(rows):
+        faq_id = row['id']
+        question = escape_html(row['question'])
+        answer = escape_html(row['answer'])
+        parts.append(
+            f'<div class="faq-item glass-card" data-faq-item="{faq_id}">'
+            f'<button class="faq-question-btn" type="button" data-faq-toggle="{faq_id}" aria-expanded="false">'
+            f'<span>{question}</span><span class="faq-toggle-mark">+</span></button>'
+            f'<div class="faq-answer" data-faq-panel="{faq_id}" hidden>{answer}</div>'
+            f'<div class="faq-item-actions">'
+            f'<button class="faq-mini-btn" type="button" data-faq-edit="{faq_id}">Редактировать</button>'
+            f'<button class="faq-mini-btn" type="button" data-faq-up="{faq_id}">↑</button>'
+            f'<button class="faq-mini-btn" type="button" data-faq-down="{faq_id}">↓</button>'
+            f'<span class="faq-move-group"><input class="faq-move-input" type="number" min="1" max="{len(rows)}" value="{idx + 1}" data-faq-target="{faq_id}" />'
+            f'<button class="faq-mini-btn" type="button" data-faq-move="{faq_id}">Перенести</button></span>'
+            f'<button class="faq-mini-btn danger" type="button" data-faq-delete="{faq_id}">Удалить</button>'
+            f'</div></div>'
+        )
+    return ''.join(parts)
+
+
 class Handler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(ROOT), **kwargs)
 
     def do_GET(self):
         parsed = urlparse(self.path)
+        if parsed.path == '/' or parsed.path == '/index.html':
+            index_path = ROOT / 'index.html'
+            html = index_path.read_text(encoding='utf-8')
+            html = html.replace('<div class="faq-list" data-faq-list></div>', f'<div class="faq-list" data-faq-list>{render_faq_html()}</div>')
+            data = html.encode('utf-8')
+            self.send_response(200)
+            self.send_header('Content-Type', 'text/html; charset=utf-8')
+            self.send_header('Content-Length', str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+            return
+
         if parsed.path == '/gallery-api/list':
             gallery_id = parse_qs(parsed.query).get('id', [''])[0]
             return json_response(self, 200, {'items': list_gallery(gallery_id)})
