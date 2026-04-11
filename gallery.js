@@ -492,7 +492,10 @@
           return [{ id: makeId(), ...demoData, createdAt: Date.now(), updatedAt: Date.now() }];
         }
         const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) && parsed.length ? parsed : [{ id: makeId(), ...demoData, createdAt: Date.now(), updatedAt: Date.now() }];
+        if (!Array.isArray(parsed) || !parsed.length) {
+          return [{ id: makeId(), ...demoData, createdAt: Date.now(), updatedAt: Date.now() }];
+        }
+        return parsed;
       } catch {
         return [{ id: makeId(), ...demoData, createdAt: Date.now(), updatedAt: Date.now() }];
       }
@@ -637,12 +640,13 @@
       productsShell.classList.toggle('is-open', productsDetails.open);
     }
 
-    $('wb-fillDemo').addEventListener('click', () => {
-      setFormData(demoData);
-      updateResults();
-      autoSaveCurrentProduct();
+    $('wb-newProduct').addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      createNewProduct();
+      const productsDetails = $('wb-products-details');
+      if (productsDetails) productsDetails.open = true;
     });
-    $('wb-newProduct').addEventListener('click', createNewProduct);
 
     if (currentProductId) {
       const current = products.find((item) => item.id === currentProductId) || products[0];

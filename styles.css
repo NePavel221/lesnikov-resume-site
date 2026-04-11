@@ -877,21 +877,9 @@ body.admin-mode .faq-item-actions {
 }
 
 .wb-app-hero {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  align-items: end;
-  margin-bottom: 24px;
-}
-
-.wb-hero-actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.wb-widget-intro {
-  max-width: none;
+  display: block;
+  margin-bottom: 12px;
+  min-height: 0;
 }
 
 .wb-workspace-grid {
@@ -974,6 +962,33 @@ body.admin-mode .faq-item-actions {
   color: var(--text);
   padding: 0;
   cursor: pointer;
+}
+
+.wb-products-toggle-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wb-products-add {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.1);
+  background: rgba(255,255,255,.05);
+  color: #f6d8e8;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  padding: 0;
+}
+
+.wb-products-add:hover {
+  background: rgba(167,15,232,.18);
+  border-color: rgba(255,79,216,.35);
 }
 
 .wb-products-toggle::-webkit-details-marker {

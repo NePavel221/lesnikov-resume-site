@@ -325,25 +325,17 @@
           <h2>Калькулятор юнит-экономики для Wildberries</h2>
         </div>
         <article class="card glass-card tilt-card wb-app-shell">
-          <div class="wb-app-hero">
-            <div>
-              <p class="muted wb-widget-intro">
-                Один из примеров того, что я делал за этот период — прикладной калькулятор юнит-экономики в стилистике Wildberries.
-                Он позволяет быстро ввести параметры артикула, посчитать прибыль, маржу, логистику и сохранить несколько товаров без постоянной возни с Excel-таблицами.
-              </p>
-            </div>
-            <div class="wb-hero-actions">
-              <button id="wb-fillDemo" type="button" class="ghost-btn">Подставить пример</button>
-              <button id="wb-newProduct" type="button" class="primary-btn">Новый товар</button>
-            </div>
-          </div>
+          <div class="wb-app-hero"></div>
 
           <section class="wb-workspace-grid">
             <aside class="wb-card wb-sidebar wb-sidebar-wide wb-products-collapsible" data-wb-products-collapsible>
-              <details class="wb-products-details" data-wb-products-details>
+              <details class="wb-products-details" data-wb-products-details open>
                 <summary class="wb-products-toggle" data-wb-products-toggle>
                   <span class="wb-section-title wb-no-span">Товары</span>
-                  <span class="wb-products-toggle-icon">▾</span>
+                  <span class="wb-products-toggle-actions">
+                    <button type="button" class="wb-products-add" id="wb-newProduct" aria-label="Новый товар">＋</button>
+                    <span class="wb-products-toggle-icon">▾</span>
+                  </span>
                 </summary>
                 <div class="wb-products-collapse" data-wb-products-collapse>
                 <div id="wb-productsList" class="wb-products-list wb-products-list-wide"></div>
