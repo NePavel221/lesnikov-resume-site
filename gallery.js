@@ -843,6 +843,7 @@
     frameEl.addEventListener('click', (e) => {
       if (!imageEl.src || imageEl.hidden) return;
       if (e.target.closest('.gallery-nav') || e.target.closest('.gallery-controls') || e.target.closest('.gallery-upload') || e.target.closest('.gallery-action')) return;
+      const state = getState(root);
       openModal(state.items, state.index);
     });
 
